@@ -22,6 +22,7 @@ function App() {
 
   const [issuanceDate_txt, set_issuanceDate_txt] = useState(null);
   const [expirationDate_txt, set_expirationDate_txt] = useState(null);
+  const [password, set_password] = useState("");
   //"2023-12-06T11:56:27.259Z"
   useEffect(() => {
     if (issuanceDate != null) {
@@ -49,34 +50,38 @@ function App() {
   }, [response_data_assessment]);
 
   const enrollment_data = async () => {
-    set_button_status(false);
-    set_process_status("Getting Enrollment Data...");
-    var data = JSON.stringify({
-      clientId: "GY1K14868",
-      clientSecret: "0c3cbdba425f5db1fce7fa47bfa78563",
-    });
-
-    var config = {
-      method: "post",
-      url: "https://ulp.uniteframework.io/ulp-bff/v1/client/bulk/getdata/proofOfEnrollment",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    let response_api = [];
-    await axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        response_api = response.data.result;
-      })
-      .catch(function (error) {
-        console.log(error);
-        response_api = error;
+    if (password === "ULP@2023") {
+      set_button_status(false);
+      set_process_status("Getting Enrollment Data...");
+      var data = JSON.stringify({
+        clientId: "GY1K14868",
+        clientSecret: "0c3cbdba425f5db1fce7fa47bfa78563",
       });
-    setresponse_data_enrollment(response_api);
-    asssesment_data();
+
+      var config = {
+        method: "post",
+        url: "https://ulp.uniteframework.io/ulp-bff/v1/client/bulk/getdata/proofOfEnrollment",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+
+      let response_api = [];
+      await axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          response_api = response.data.result;
+        })
+        .catch(function (error) {
+          console.log(error);
+          response_api = error;
+        });
+      setresponse_data_enrollment(response_api);
+      asssesment_data();
+    } else {
+      alert("You Entered Wrong Password");
+    }
   };
   const asssesment_data = async () => {
     set_process_status("Getting Assessment Data...");
@@ -285,6 +290,16 @@ function App() {
               <DatePicker
                 selected={expirationDate}
                 onChange={(date) => set_expirationDate(date)}
+                className="date_input"
+              />
+              <br />
+              <br />
+              <font className="date_input_text">Password</font>
+              <br />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => set_password(e.target.value)}
                 className="date_input"
               />
               <br />
