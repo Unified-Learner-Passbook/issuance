@@ -234,6 +234,9 @@ function App() {
         districtName: "HATHRAS",
         blockCode: "091306",
         blockName: "SADABAD",
+        assessment: "NAT assessment Lucknow mandal",
+        total: "300",
+        quarterlyAssessment: "3",
       },
       credentialSubject: credentialSubjectEnrollment,
     });
