@@ -8,6 +8,11 @@ import DatePicker from "react-datepicker";
 import moment from "moment";
 import ClipLoader from "react-spinners/ClipLoader";
 
+//csv files
+import Enrollment from "../src/csv/Enrollment.csv";
+import Assessment from "../src/csv/Assessment.csv";
+import Benifits from "../src/csv/Benifits.csv";
+
 function App() {
   const [response, set_response] = useState([]);
   const [response_data, set_response_data] = useState([]);
@@ -22,6 +27,42 @@ function App() {
   const [issuanceDate_txt, set_issuanceDate_txt] = useState(null);
   const [expirationDate_txt, set_expirationDate_txt] = useState(null);
   const [password, set_password] = useState("");
+
+  //csv file states
+  const [file, setFile] = useState();
+  const [array, setArray] = useState([]);
+  const fileReader = new FileReader();
+  const handleOnChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  useEffect(() => {
+    if (file) {
+      fileReader.onload = function (event) {
+        const text = event.target.result;
+        csvFileToArray(text);
+      };
+      fileReader.readAsText(file);
+    }
+  }, [file]);
+
+  const csvFileToArray = (string) => {
+    const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
+    const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
+
+    const array = csvRows.map((i) => {
+      const values = i.split(",");
+      const obj = csvHeader.reduce((object, header, index) => {
+        object[header] = values[index];
+        return object;
+      }, {});
+      return obj;
+    });
+    console.log(array.length);
+    setArray(array);
+  };
+
+  const headerKeys = Object.keys(Object.assign({}, ...array));
 
   const [client_id, set_client_id] = useState("BPIB61138");
   const [client_secret, set_client_secret] = useState(
@@ -51,6 +92,7 @@ function App() {
   }, [expirationDate]);
 
   useEffect(() => {
+    //alert(response_data.length);
     if (response_data.length != 0) {
       issueCred(response_data);
     }
@@ -58,34 +100,43 @@ function App() {
 
   const get_mock_data = async () => {
     if (password === "ULP@2023") {
-      set_response_data([]);
-      set_button_status(false);
-      set_process_status(`Getting ${credential_type} Data...`);
-      var data = JSON.stringify({
-        clientId: client_id,
-        clientSecret: client_secret,
-      });
+      if (data_type === "CSV Data" && !file) {
+        alert("Select " + credential_type + " CSV Data file");
+      } else {
+        set_response_data([]);
+        set_button_status(false);
+        set_process_status(`Getting ${credential_type} Data...`);
+        if (data_type === "CSV Data") {
+          //alert(JSON.stringify(array));
+          set_response_data(array);
+        } else {
+          var data = JSON.stringify({
+            clientId: client_id,
+            clientSecret: client_secret,
+          });
 
-      var config = {
-        method: "post",
-        url: bff_url + "v1/client/bulk/getdata/proofOf" + credential_type,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: data,
-      };
+          var config = {
+            method: "post",
+            url: bff_url + "v1/client/bulk/getdata/proofOf" + credential_type,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: data,
+          };
 
-      let response_api = [];
-      await axios(config)
-        .then(function (response) {
-          console.log(JSON.stringify(response.data));
-          response_api = response.data.result;
-        })
-        .catch(function (error) {
-          console.log(error);
-          response_api = error;
-        });
-      set_response_data(response_api);
+          let response_api = [];
+          await axios(config)
+            .then(function (response) {
+              console.log(JSON.stringify(response.data));
+              response_api = response.data.result;
+            })
+            .catch(function (error) {
+              console.log(error);
+              response_api = error;
+            });
+          set_response_data(response_api);
+        }
+      }
     } else {
       alert("You Entered Wrong Password");
     }
@@ -96,7 +147,11 @@ function App() {
     set_response([]);
     let credentialSubject = [];
     //alert(data.length);
-    for (let i = 0; i < 25; i++) {
+    let limitcount = 25;
+    if (data.length < limitcount) {
+      limitcount = data.length;
+    }
+    for (let i = 0; i < limitcount; i++) {
       credentialSubject.push(data[i]);
     }
     var data = JSON.stringify({
@@ -215,6 +270,60 @@ function App() {
                     CSV Data
                   </div>
                 </div>
+                {data_type === "CSV Data" ? (
+                  <>
+                    <div className="col s12 m6 l6 center">
+                      <br />
+                      <a
+                        href={
+                          credential_type === "Enrollment"
+                            ? Enrollment
+                            : credential_type === "Assessment"
+                            ? Assessment
+                            : Benifits
+                        }
+                        download={true}
+                        className="download_text"
+                      >
+                        Download Sample {credential_type} CSV Data File
+                      </a>
+                    </div>
+                    <div className="col s12 m6 l6 center">
+                      <br />
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+                      <br />
+                      <br />
+                    </div>
+                    {/*<div className="col s12 m12 l12 center">
+                      <table className="custom_table">
+                        <thead>
+                          <tr key={"header"}>
+                            {headerKeys.map((key) => (
+                              <th>{key}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {array.map((item) => (
+                            <tr key={item.id}>
+                              {Object.values(item).map((val) => (
+                                <td>{val}</td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <br />
+                    </div>*/}
+                  </>
+                ) : (
+                  <></>
+                )}
                 <div className="col s12 m4 l4 center">
                   <font className="date_input_text">Issuance Date</font>
                   <br />
@@ -295,15 +404,21 @@ function App() {
                         return return_text;
                       })()}
                     </tr>
-                    {response_data.map((item, index) => {
-                      return (
-                        <tr>
-                          {Object.keys(item).map(function (itemIndex) {
-                            return <td>{item[itemIndex]}</td>;
-                          })}
-                        </tr>
-                      );
-                    })}
+                    {response_data ? (
+                      <>
+                        {response_data.map((item, index) => {
+                          return (
+                            <tr>
+                              {Object.keys(item).map(function (itemIndex) {
+                                return <td>{item[itemIndex]}</td>;
+                              })}
+                            </tr>
+                          );
+                        })}
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </table>
                 </>
               ) : (

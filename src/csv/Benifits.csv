@@ -1,0 +1,2 @@
+student_id,student_name,dob,reference_id,aadhar_token,guardian_name,enrolled_on,transactionId,transactionAmount,deliveryDate,grade,academic_year,benefitProvider,schemeName,schemeId,stateCode,stateName,districtCode,districtName,blockCode,blockName
+1234,SHANI,29/12/1990,035613199,35613199222,Test Guardian SHANI,2022-06-06,C102204126961,1200,01-07-2023,class-1,2022-2023,Basic Shiksha department,"All (Uniform,Shoes–Socks,Sweater,School Bag,Stationery)",CULC8,09,Uttar Pradesh,0913,HATHRAS,091306,SADABAD

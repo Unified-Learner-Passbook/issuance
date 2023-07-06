@@ -1,0 +1,2 @@
+student_id,student_name,dob,reference_id,aadhar_token,marks,grade,academic_year,assessment,schoolName,total,quarterlyAssessment,stateCode,stateName,districtCode,districtName,blockCode,blockName
+1234,SHANI,1999-05-08,35613199,35613199222,12,class-1,2022-2023,LucknowMandal-NAT-Assessment-SetA,CENTRAL PUBLIC ACEDEMY,40,3,9,Uttar Pradesh,913,HATHRAS,91306,SADABAD
