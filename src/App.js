@@ -9,9 +9,8 @@ import moment from "moment";
 import ClipLoader from "react-spinners/ClipLoader";
 
 function App() {
-  const [response, setresponse] = useState([]);
-  const [response_data_assessment, setresponse_data_assessment] = useState([]);
-  const [response_data_enrollment, setresponse_data_enrollment] = useState([]);
+  const [response, set_response] = useState([]);
+  const [response_data, set_response_data] = useState([]);
   const [button_status, set_button_status] = useState(true);
   const [process_status, set_process_status] = useState("Not Yet Started");
 
@@ -23,6 +22,20 @@ function App() {
   const [issuanceDate_txt, set_issuanceDate_txt] = useState(null);
   const [expirationDate_txt, set_expirationDate_txt] = useState(null);
   const [password, set_password] = useState("");
+
+  const [client_id, set_client_id] = useState("BPIB61138");
+  const [client_secret, set_client_secret] = useState(
+    "2c0310fc89417ecc52bbb812b664d06d"
+  );
+  const [bff_url, set_bff_url] = useState(
+    "https://dev-ulp.uniteframework.io/ulp-bff/"
+  );
+  const [issuer_did, set_issuer_did] = useState(
+    "did:ulp:8fa91809-a8e7-402c-aca6-0541ae36415f"
+  );
+  const [credential_type, set_credential_type] = useState("Enrollment");
+  const [data_type, set_data_type] = useState("Dummy Data");
+
   //"2023-12-06T11:56:27.259Z"
   useEffect(() => {
     if (issuanceDate != null) {
@@ -38,29 +51,24 @@ function App() {
   }, [expirationDate]);
 
   useEffect(() => {
-    if (response_data_enrollment.length != 0) {
-      issueCredEnrollment(response_data_enrollment);
+    if (response_data.length != 0) {
+      issueCred(response_data);
     }
-  }, [response_data_enrollment]);
+  }, [response_data]);
 
-  useEffect(() => {
-    if (response_data_assessment.length != 0) {
-      issueCredAssessment(response_data_assessment);
-    }
-  }, [response_data_assessment]);
-
-  const enrollment_data = async () => {
+  const get_mock_data = async () => {
     if (password === "ULP@2023") {
+      set_response_data([]);
       set_button_status(false);
-      set_process_status("Getting Enrollment Data...");
+      set_process_status(`Getting ${credential_type} Data...`);
       var data = JSON.stringify({
-        clientId: "GY1K14868",
-        clientSecret: "0c3cbdba425f5db1fce7fa47bfa78563",
+        clientId: client_id,
+        clientSecret: client_secret,
       });
 
       var config = {
         method: "post",
-        url: "https://ulp.uniteframework.io/ulp-bff/v1/client/bulk/getdata/proofOfEnrollment",
+        url: bff_url + "v1/client/bulk/getdata/proofOf" + credential_type,
         headers: {
           "Content-Type": "application/json",
         },
@@ -77,75 +85,25 @@ function App() {
           console.log(error);
           response_api = error;
         });
-      setresponse_data_enrollment(response_api);
-      asssesment_data();
+      set_response_data(response_api);
     } else {
       alert("You Entered Wrong Password");
     }
   };
-  const asssesment_data = async () => {
-    set_process_status("Getting Assessment Data...");
-    var data = JSON.stringify({
-      clientId: "GY1K14868",
-      clientSecret: "0c3cbdba425f5db1fce7fa47bfa78563",
-    });
-
-    var config = {
-      method: "post",
-      url: "https://ulp.uniteframework.io/ulp-bff/v1/client/bulk/getdata/proofOfAssessment",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    let response_api = [];
-    await axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        response_api = response.data.result;
-      })
-      .catch(function (error) {
-        console.log(error);
-        response_api = error;
-      });
-    setresponse_data_assessment(response_api);
-    //issueCredEnrollment(response_data_enrollment);
-  };
-
-  const issueCredEnrollment = async (data) => {
-    set_process_status("Issuing Enrollment and Assessment Credentials...");
+  const issueCred = async (data) => {
+    set_process_status(`Issuing ${credential_type} Credentials...`);
     set_button_status(false);
-    setresponse([]);
-    let credentialSubjectEnrollment = [];
+    set_response([]);
+    let credentialSubject = [];
     //alert(data.length);
     for (let i = 0; i < 25; i++) {
-      credentialSubjectEnrollment.push({
-        student_id: data[i].student_id,
-        student_name: data[i].student_name,
-        dob: data[i].dob,
-        reference_id: data[i].reference_id,
-        aadhar_token: data[i].aadhar_token,
-        guardian_name: data[i].guardian_name,
-        enrolled_on: data[i].enrolled_on,
-      });
-      /*[
-      {
-        student_id: "1234",
-        student_name: "Rushi Gawali",
-        dob: "31/01/1992",
-        reference_id: "6399001506",
-        aadhar_token: "23a136624c39ac2942fdffdcd9a6ae0b",
-        guardian_name: "Guardian Name",
-        enrolled_on: "2021-07-08",
-      },
-    ]*/
+      credentialSubject.push(data[i]);
     }
     var data = JSON.stringify({
-      clientId: "GY1K14868",
-      clientSecret: "0c3cbdba425f5db1fce7fa47bfa78563",
+      clientId: client_id,
+      clientSecret: client_secret,
       issuerDetail: {
-        did: "did:ulp:f0c63323-7c59-4db5-94c6-7a9886934680",
+        did: issuer_did,
         udise: "09580413502",
         schoolName: "CENTRAL PUBLIC ACEDEMY",
       },
@@ -153,21 +111,11 @@ function App() {
         issuanceDate: issuanceDate_txt,
         expirationDate: expirationDate_txt,
       },
-      credentialSubjectCommon: {
-        grade: "class-7",
-        academic_year: "2023-2024",
-        stateCode: "09",
-        stateName: "Uttar Pradesh",
-        districtCode: "0913",
-        districtName: "HATHRAS",
-        blockCode: "091306",
-        blockName: "SADABAD",
-      },
-      credentialSubject: credentialSubjectEnrollment,
+      credentialSubject: credentialSubject,
     });
     var config = {
       method: "post",
-      url: "https://ulp.uniteframework.io/ulp-bff/v1/client/bulk/uploadv2/proofOfEnrollment",
+      url: bff_url + "v1/client/bulk/uploadv2/proofOf" + credential_type,
       headers: {
         "Content-Type": "application/json",
       },
@@ -183,226 +131,188 @@ function App() {
         console.log(error);
         response_api = { error: error };
       });
-    setresponse(response_api);
-    //issueCredAssessment(response_data_assessment);
-  };
-
-  const issueCredAssessment = async (data) => {
-    set_process_status("Issuing Enrollment and Assessment Credentials...");
-    set_button_status(false);
-    setresponse([]);
-    let credentialSubjectEnrollment = [];
-    for (let i = 0; i < 25; i++) {
-      credentialSubjectEnrollment.push({
-        student_id: data[i].student_id,
-        student_name: data[i].student_name,
-        dob: data[i].dob,
-        reference_id: data[i].reference_id,
-        aadhar_token: data[i].aadhar_token,
-        marks: data[i].marks,
-      });
-      /*[
-      {
-        student_id: "1234",
-        student_name: "Rushi Gawali",
-        dob: "31/01/1992",
-        reference_id: "6399001506",
-        aadhar_token: "23a136624c39ac2942fdffdcd9a6ae0b",
-        guardian_name: "Guardian Name",
-        enrolled_on: "2021-07-08",
-      },
-    ]*/
-    }
-    var data = JSON.stringify({
-      clientId: "GY1K14868",
-      clientSecret: "0c3cbdba425f5db1fce7fa47bfa78563",
-      issuerDetail: {
-        did: "did:ulp:f0c63323-7c59-4db5-94c6-7a9886934680",
-        udise: "09580413502",
-        schoolName: "CENTRAL PUBLIC ACEDEMY",
-      },
-      vcData: {
-        issuanceDate: issuanceDate_txt,
-        expirationDate: expirationDate_txt,
-      },
-      credentialSubjectCommon: {
-        grade: "class-7",
-        academic_year: "2023-2024",
-        stateCode: "09",
-        stateName: "Uttar Pradesh",
-        districtCode: "0913",
-        districtName: "HATHRAS",
-        blockCode: "091306",
-        blockName: "SADABAD",
-        assessment: "NAT assessment Lucknow mandal",
-        total: "300",
-        quarterlyAssessment: "3",
-      },
-      credentialSubject: credentialSubjectEnrollment,
-    });
-    var config = {
-      method: "post",
-      url: "https://ulp.uniteframework.io/ulp-bff/v1/client/bulk/uploadv2/proofOfAssessment",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-    let response_api = [];
-    await axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        response_api = response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-        response_api = { error: error };
-      });
-    setresponse(response_api);
-    set_process_status("Issued Enrollment and Assessment Credentials.");
+    set_response(response_api);
+    set_process_status(`Issued ${credential_type} Credentials.`);
     set_button_status(true);
   };
+
   return (
     <div className="App">
-      <div style={{ width: "100%" }}>
-        <center>
-          <br />
-          <br />
-          <img src={gov_logo} className="logo_gov" />
-          <br />
-          <br />
-          <font className="logo_text">Credentials Issue Example</font>
-          <br />
-          <br />
-          <img src={home_image} className="logo_home" />
-          {button_status ? (
-            <>
+      <div className="container_remove">
+        <div className="row">
+          <div className="col s12 m12 l12">
+            <center>
               <br />
+              <img src={gov_logo} className="logo_gov" />
               <br />
-              <font className="date_input_text">Issuance Date</font>
+              <font className="logo_text">Credentials Issue Example</font>
               <br />
-              <DatePicker
-                selected={issuanceDate}
-                onChange={(date) => set_issuanceDate(date)}
-                className="date_input"
-              />
-              <br />
-              <br />
-              <font className="date_input_text">Expiration Date</font>
-              <br />
-              <DatePicker
-                selected={expirationDate}
-                onChange={(date) => set_expirationDate(date)}
-                className="date_input"
-              />
-              <br />
-              <br />
-              <font className="date_input_text">Password</font>
-              <br />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => set_password(e.target.value)}
-                className="date_input"
-              />
-              <br />
-              <br />
-              <button
-                className="issue_but"
-                onClick={() => enrollment_data()}
-                enabled={button_status}
-              >
-                Issue
-              </button>
-            </>
-          ) : (
-            <>
-              <br />
-              <ClipLoader
-                color="#ff0000"
-                loading={true}
-                size={100}
-                aria-label="Loading Spinner"
-                data-testid="loader"
-              />
-            </>
-          )}
-          <br />
-          <br />
-        </center>
-        <div className="status_div">
-          <center>
-            <font className="status_text">{process_status}</font>
-          </center>
+              <img src={home_image} className="logo_home" />
+            </center>
+          </div>
         </div>
-        <div>
-          <center>
-            {response_data_enrollment.length != 0 ? (
+        <div className="container">
+          <div className="row">
+            {button_status ? (
               <>
-                <br />
-                <font className="table_header">Enrollment data</font>
-                <table>
-                  <tr>
-                    {(() => {
-                      const item_keys = Object.keys(
-                        response_data_enrollment[0]
-                      );
-                      let return_text = [];
-                      for (let i = 0; i < item_keys.length; i++) {
-                        return_text.push(<th>{item_keys[i]}</th>);
-                      }
-                      return return_text;
-                    })()}
-                  </tr>
-                  {response_data_enrollment.map((item, index) => {
-                    return (
-                      <tr>
-                        {Object.keys(item).map(function (itemIndex) {
-                          return <td>{item[itemIndex]}</td>;
-                        })}
-                      </tr>
-                    );
-                  })}
-                </table>
+                <div className="col s12 m12 l12 center">
+                  <font className="date_input_text">Credential Type</font>
+                </div>
+                <div className="col s6 m4 l4">
+                  <div
+                    className={`div_button center ${
+                      credential_type === "Enrollment"
+                        ? "div_button_active"
+                        : ""
+                    }`}
+                    onClick={() => set_credential_type("Enrollment")}
+                  >
+                    Enrollment
+                  </div>
+                </div>
+                <div className="col s6 m4 l4">
+                  <div
+                    className={`div_button center ${
+                      credential_type === "Assessment"
+                        ? "div_button_active"
+                        : ""
+                    }`}
+                    onClick={() => set_credential_type("Assessment")}
+                  >
+                    Assessment
+                  </div>
+                </div>
+                <div className="col s6 m4 l4">
+                  <div
+                    className={`div_button center ${
+                      credential_type === "Benifits" ? "div_button_active" : ""
+                    }`}
+                    onClick={() => set_credential_type("Benifits")}
+                  >
+                    Benifits
+                  </div>
+                </div>
+                <div className="col s12 m12 l12 center">
+                  <font className="date_input_text">Data Source</font>
+                </div>
+                <div className="col s6 m6 l6">
+                  <div
+                    className={`div_button center ${
+                      data_type === "Dummy Data" ? "div_button_active" : ""
+                    }`}
+                    onClick={() => set_data_type("Dummy Data")}
+                  >
+                    Dummy Data
+                  </div>
+                </div>
+                <div className="col s6 m6 l6">
+                  <div
+                    className={`div_button center ${
+                      data_type === "CSV Data" ? "div_button_active" : ""
+                    }`}
+                    onClick={() => set_data_type("CSV Data")}
+                  >
+                    CSV Data
+                  </div>
+                </div>
+                <div className="col s12 m4 l4 center">
+                  <font className="date_input_text">Issuance Date</font>
+                  <br />
+                  <DatePicker
+                    selected={issuanceDate}
+                    onChange={(date) => set_issuanceDate(date)}
+                    className="date_input"
+                    dateFormat="dd-MMM-yyyy"
+                  />
+                </div>
+                <div className="col s12 m4 l4 center">
+                  <font className="date_input_text">Expiration Date</font>
+                  <br />
+                  <DatePicker
+                    selected={expirationDate}
+                    onChange={(date) => set_expirationDate(date)}
+                    className="date_input"
+                    dateFormat="dd-MMM-yyyy"
+                  />
+                </div>
+                <div className="col s12 m4 l4 center">
+                  <font className="date_input_text">Password</font>
+                  <br />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => set_password(e.target.value)}
+                    className="date_input_pass"
+                  />
+                </div>
+                <div className="col s12 m12 l12 center">
+                  <br />
+                  <button
+                    className="issue_but"
+                    onClick={() => get_mock_data()}
+                    enabled={button_status}
+                  >
+                    Issue {credential_type}
+                  </button>
+                </div>
               </>
             ) : (
-              <></>
-            )}
-            {response_data_assessment.length != 0 ? (
               <>
-                <br />
-                <font className="table_header">Assessment data</font>
-                <table>
-                  <tr>
-                    {(() => {
-                      const item_keys = Object.keys(
-                        response_data_assessment[0]
-                      );
-                      let return_text = [];
-                      for (let i = 0; i < item_keys.length; i++) {
-                        return_text.push(<th>{item_keys[i]}</th>);
-                      }
-                      return return_text;
-                    })()}
-                  </tr>
-                  {response_data_assessment.map((item, index) => {
-                    return (
-                      <tr>
-                        {Object.keys(item).map(function (itemIndex) {
-                          return <td>{item[itemIndex]}</td>;
-                        })}
-                      </tr>
-                    );
-                  })}
-                </table>
+                <div className="col s12 m12 l12 center">
+                  <ClipLoader
+                    color="#ff0000"
+                    loading={true}
+                    size={70}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  />
+                </div>
               </>
-            ) : (
-              <></>
             )}
-          </center>
+          </div>
         </div>
-        <br />
-        {/*JSON.stringify(response, <br />, 2)*/}
+        <div className="row">
+          <div className="col s12 m12 l12 status_div">
+            <center>
+              <font className="status_text">{process_status}</font>
+            </center>
+          </div>
+          <div className="col s12 m12 l12">
+            <center>
+              {response_data.length != 0 ? (
+                <>
+                  <br />
+                  <font className="table_header">{credential_type} Data</font>
+                  <br />
+                  <table className="custom_table">
+                    <tr>
+                      {(() => {
+                        const item_keys = Object.keys(response_data[0]);
+                        let return_text = [];
+                        for (let i = 0; i < item_keys.length; i++) {
+                          return_text.push(<th>{item_keys[i]}</th>);
+                        }
+                        return return_text;
+                      })()}
+                    </tr>
+                    {response_data.map((item, index) => {
+                      return (
+                        <tr>
+                          {Object.keys(item).map(function (itemIndex) {
+                            return <td>{item[itemIndex]}</td>;
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </table>
+                </>
+              ) : (
+                <></>
+              )}
+            </center>
+          </div>
+          <br />
+        </div>
       </div>
     </div>
   );
