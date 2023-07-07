@@ -29,7 +29,7 @@ function App() {
   const [password, set_password] = useState("");
 
   //csv file states
-  const [file, setFile] = useState();
+  const [file, setFile] = useState(null);
   const [array, setArray] = useState([]);
   const fileReader = new FileReader();
   const handleOnChange = (e) => {
@@ -75,7 +75,7 @@ function App() {
     "did:ulp:8fa91809-a8e7-402c-aca6-0541ae36415f"
   );
   const [credential_type, set_credential_type] = useState("Enrollment");
-  const [data_type, set_data_type] = useState("Dummy Data");
+  const [data_type, set_data_type] = useState("CSV Data");
 
   //"2023-12-06T11:56:27.259Z"
   useEffect(() => {
@@ -100,6 +100,7 @@ function App() {
 
   const get_mock_data = async () => {
     if (password === "ULP@2023") {
+      //alert(file);
       if (data_type === "CSV Data" && !file) {
         alert("Select " + credential_type + " CSV Data file");
       } else {
@@ -186,8 +187,13 @@ function App() {
         console.log(error);
         response_api = { error: error };
       });
+    if (response_api?.error) {
+      set_process_status(response_api?.error);
+    } else {
+      set_process_status(`Issued ${credential_type} Credentials.`);
+    }
+    setFile(null);
     set_response(response_api);
-    set_process_status(`Issued ${credential_type} Credentials.`);
     set_button_status(true);
   };
 
@@ -253,21 +259,21 @@ function App() {
                 <div className="col s6 m6 l6">
                   <div
                     className={`div_button center ${
-                      data_type === "Dummy Data" ? "div_button_active" : ""
-                    }`}
-                    onClick={() => set_data_type("Dummy Data")}
-                  >
-                    Dummy Data
-                  </div>
-                </div>
-                <div className="col s6 m6 l6">
-                  <div
-                    className={`div_button center ${
                       data_type === "CSV Data" ? "div_button_active" : ""
                     }`}
                     onClick={() => set_data_type("CSV Data")}
                   >
                     CSV Data
+                  </div>
+                </div>
+                <div className="col s6 m6 l6">
+                  <div
+                    className={`div_button center ${
+                      data_type === "Dummy Data" ? "div_button_active" : ""
+                    }`}
+                    onClick={() => set_data_type("Dummy Data")}
+                  >
+                    Mock Prerana Portal Data
                   </div>
                 </div>
                 {data_type === "CSV Data" ? (
