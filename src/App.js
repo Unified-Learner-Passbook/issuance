@@ -93,9 +93,9 @@ function App() {
 
   useEffect(() => {
     //alert(response_data.length);
-    if (response_data.length != 0) {
+    /*if (response_data.length != 0) {
       issueCred(response_data);
-    }
+    }*/
   }, [response_data]);
 
   const get_mock_data = async () => {
@@ -110,6 +110,9 @@ function App() {
         if (data_type === "CSV Data") {
           //alert(JSON.stringify(array));
           set_response_data(array);
+          if (array.length != 0) {
+            issueCred(array);
+          }
         } else {
           var data = JSON.stringify({
             clientId: client_id,
@@ -136,6 +139,9 @@ function App() {
               response_api = error;
             });
           set_response_data(response_api);
+          if (response_api.length != 0) {
+            issueCred(response_api);
+          }
         }
       }
     } else {
@@ -196,7 +202,134 @@ function App() {
     set_response(response_api);
     set_button_status(true);
   };
+  const get_mock_data_delete = async () => {
+    if (password === "ULP@2023@delete") {
+      //alert(file);
+      if (data_type === "CSV Data" && !file) {
+        alert(
+          "Select CSV Data file for list of aadhaar id token to delete data"
+        );
+      } else {
+        set_response_data([]);
+        set_button_status(false);
+        set_process_status(`Getting Data to Delete...`);
+        if (data_type === "CSV Data") {
+          //alert(JSON.stringify(array));
+          set_response_data(array);
+          if (array.length != 0) {
+            deleteCred(array);
+          }
+        } else {
+          var data = JSON.stringify({
+            clientId: client_id,
+            clientSecret: client_secret,
+          });
 
+          var config = {
+            method: "post",
+            url: bff_url + "v1/client/bulk/getdata/proofOf" + credential_type,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: data,
+          };
+
+          let response_api = [];
+          await axios(config)
+            .then(function (response) {
+              console.log(JSON.stringify(response.data));
+              response_api = response.data.result;
+            })
+            .catch(function (error) {
+              console.log(error);
+              response_api = error;
+            });
+          set_response_data(response_api);
+          if (response_api.length != 0) {
+            deleteCred(response_api);
+          }
+        }
+      }
+    } else {
+      alert("You Entered Wrong Password");
+    }
+  };
+  const deleteCred = async (data) => {
+    set_process_status(`Deleting Data and Credentials...`);
+    set_button_status(false);
+    set_response([]);
+    let aadhaarTokenList = [];
+    //alert(data.length);
+    let limitcount = 25;
+    if (data.length < limitcount) {
+      limitcount = data.length;
+    }
+    for (let i = 0; i < limitcount; i++) {
+      aadhaarTokenList.push(data[i].aadhar_token);
+    }
+    //get client token
+    var data = JSON.stringify({
+      password: "test@4321",
+    });
+    var config = {
+      method: "post",
+      url: bff_url + "v1/sbrc/token",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    let response_client = null;
+    await axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        response_client = response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    if (response_client?.token) {
+      let client_token = response_client.token;
+      var data = JSON.stringify({
+        aadhaar_list: aadhaarTokenList,
+      });
+      var config = {
+        method: "post",
+        url: bff_url + "v1/sbrc/accountdelete",
+        headers: {
+          Authorization: "Bearer " + client_token,
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+      let response_delete = null;
+      await axios(config)
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          response_delete = response.data;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      if (response_delete != null) {
+        set_process_status(
+          <pre style={{ textAlign: "left" }}>
+            `Deleted Credentials Data. $
+            {JSON.stringify(response_delete, undefined, 2)}`
+          </pre>
+        );
+      } else {
+        set_process_status(`Error in deleting credentials.`);
+      }
+    } else {
+      set_process_status(`Error in getting client token.`);
+    }
+    setFile(null);
+    set_response(response_client);
+    set_button_status(true);
+    //reset data array
+    set_response_data([]);
+  };
   return (
     <div className="App">
       <div className="container_remove">
@@ -208,7 +341,7 @@ function App() {
               <br />
               <font className="logo_text">Credentials Issue Example</font>
               <br />
-              <img src={home_image} className="logo_home" />
+              {/*<img src={home_image} className="logo_home" />*/}
             </center>
           </div>
         </div>
@@ -370,6 +503,16 @@ function App() {
                     Issue {credential_type}
                   </button>
                 </div>
+                <div className="col s12 m12 l12 center">
+                  <font className="date_input_text">OR</font>
+                  <button
+                    className="delete_but"
+                    onClick={() => get_mock_data_delete()}
+                    enabled={button_status}
+                  >
+                    Delete All Credentials
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -413,13 +556,15 @@ function App() {
                     {response_data ? (
                       <>
                         {response_data.map((item, index) => {
-                          return (
-                            <tr>
-                              {Object.keys(item).map(function (itemIndex) {
-                                return <td>{item[itemIndex]}</td>;
-                              })}
-                            </tr>
-                          );
+                          if (index < 25) {
+                            return (
+                              <tr>
+                                {Object.keys(item).map(function (itemIndex) {
+                                  return <td>{item[itemIndex]}</td>;
+                                })}
+                              </tr>
+                            );
+                          }
                         })}
                       </>
                     ) : (
