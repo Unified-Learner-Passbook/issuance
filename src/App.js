@@ -14,6 +14,7 @@ import Assessment from "../src/csv/Assessment.csv";
 import Benifits from "../src/csv/Benifits.csv";
 
 function App() {
+  console.log(process.env.REACT_APP_ENV);
   const [response, set_response] = useState([]);
   const [response_data, set_response_data] = useState([]);
   const [button_status, set_button_status] = useState(true);
@@ -64,15 +65,13 @@ function App() {
 
   const headerKeys = Object.keys(Object.assign({}, ...array));
 
-  const [client_id, set_client_id] = useState("BPIB61138");
+  const [client_id, set_client_id] = useState(process.env.REACT_APP_CLIENT_ID);
   const [client_secret, set_client_secret] = useState(
-    "2c0310fc89417ecc52bbb812b664d06d"
+    process.env.REACT_APP_CLIENT_SECRET
   );
-  const [bff_url, set_bff_url] = useState(
-    "https://dev-ulp.uniteframework.io/ulp-bff/"
-  );
+  const [bff_url, set_bff_url] = useState(process.env.REACT_APP_ULP_BFF);
   const [issuer_did, set_issuer_did] = useState(
-    "did:ulp:8fa91809-a8e7-402c-aca6-0541ae36415f"
+    process.env.REACT_APP_ISSUER_DID
   );
   const [credential_type, set_credential_type] = useState("Enrollment");
   const [data_type, set_data_type] = useState("CSV Data");
