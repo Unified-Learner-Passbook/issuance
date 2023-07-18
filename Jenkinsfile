@@ -39,7 +39,7 @@ node() {
     
     stage('Start deploy job with latest tag') {
          if (env.BRANCH_NAME == 'uat') { 
-                build job: 'ULP/deploy-staging/deploy-issuer', parameters: [string(name: 'tag', value: 'uat')]
+                build job: 'UAT/deploy-uat/deploy-issuer', parameters: [string(name: 'tag', value: 'uat')]
          }
 }
 
