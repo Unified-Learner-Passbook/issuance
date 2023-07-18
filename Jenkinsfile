@@ -40,6 +40,7 @@ node() {
     stage('Start deploy job with latest tag') {
          if (env.BRANCH_NAME == 'dev') { 
                 build job: 'SBRC-deploy/deploy-services/deploy-staging/deploy-issuer', parameters: [string(name: 'tag', value: 'dev')]
+         
          }
     }
 
