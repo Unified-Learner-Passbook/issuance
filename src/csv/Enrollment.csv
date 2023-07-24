@@ -1,2 +1,2 @@
-student_id,student_name,dob,reference_id,aadhar_token,guardian_name,enrolled_on,grade,academic_year,stateCode,stateName,districtCode,districtName,blockCode,blockName
-1234,SHANI,27/11/2011,035613199,35613199222,Sarmi,2022-02-04,class-7,2023-2024,09,Uttar Pradesh,0913,Lucknow,091306,Sarojini Nagar
+student_name,name,dob,gender,aadhar_token,orgName,orgId,orgAddress,orgContact,orgEmail,associatedSince,contact,orgLogo,profileImage,associatedTill,emergencyContact,unitAssociatedWith
+ALI HUSAIN,ALI HUSAIN,01/01/2007,M,638234706193493973,BENI S VEDIC VIDYAVATI I C BALUGANJ AGRA,9151701903,114 NAI BASTI BALUGANJ AGRA 01-AGRA 282001,9634195155,school@gmail.com,05-2012,9634195155,-,-,05-2013,9634195155,Class 10
