@@ -29,6 +29,11 @@ function App() {
   const [expirationDate_txt, set_expirationDate_txt] = useState(null);
   const [password, set_password] = useState("");
 
+  //enrollment credentials
+  const [issuer, set_issuer] = useState("Department of Basic Education");
+  const [nature_associate, set_nature_associate] = useState("Other");
+  const [title_associate, set_title_associate] = useState("Student");
+
   //csv file states
   const [file, setFile] = useState(null);
   const [array, setArray] = useState([]);
@@ -101,11 +106,19 @@ function App() {
     if (password === "ULP@2023") {
       //alert(file);
       if (data_type === "CSV Data" && !file) {
-        alert("Select " + credential_type + " CSV Data file");
+        alert(
+          "Select " + credential_type === "Benifits"
+            ? "Benefits"
+            : credential_type + " CSV Data file"
+        );
       } else {
         set_response_data([]);
         set_button_status(false);
-        set_process_status(`Getting ${credential_type} Data...`);
+        set_process_status(
+          `Getting ${
+            credential_type === "Benifits" ? "Benefits" : credential_type
+          } Data...`
+        );
         if (data_type === "CSV Data") {
           //alert(JSON.stringify(array));
           set_response_data(array);
@@ -148,7 +161,11 @@ function App() {
     }
   };
   const issueCred = async (data) => {
-    set_process_status(`Issuing ${credential_type} Credentials...`);
+    set_process_status(
+      `Issuing ${
+        credential_type === "Benifits" ? "Benefits" : credential_type
+      } Credentials...`
+    );
     set_button_status(false);
     set_response([]);
     let credentialSubject = [];
@@ -158,6 +175,10 @@ function App() {
       limitcount = data.length;
     }
     for (let i = 0; i < limitcount; i++) {
+      if (credential_type === "Enrollment") {
+        data[i].natureOfAssociation = nature_associate;
+        data[i].associationTitle = title_associate;
+      }
       credentialSubject.push(data[i]);
     }
     var data = JSON.stringify({
@@ -195,7 +216,11 @@ function App() {
     if (response_api?.error) {
       set_process_status(response_api?.error);
     } else {
-      set_process_status(`Issued ${credential_type} Credentials.`);
+      set_process_status(
+        `Issued ${
+          credential_type === "Benifits" ? "Benefits" : credential_type
+        } Credentials.`
+      );
     }
     setFile(null);
     set_response(response_api);
@@ -313,7 +338,7 @@ function App() {
       if (response_delete != null) {
         set_process_status(
           <pre style={{ textAlign: "left" }}>
-            `Deleted Credentials Data. $
+            `Deleted Credentials Data.
             {JSON.stringify(response_delete, undefined, 2)}`
           </pre>
         );
@@ -338,179 +363,258 @@ function App() {
               <br />
               <img src={gov_logo} className="logo_gov" />
               <br />
-              <font className="logo_text">Credentials Issue Example</font>
-              <br />
               {/*<img src={home_image} className="logo_home" />*/}
             </center>
           </div>
         </div>
-        <div className="container">
+        <div className="container div_cred_type div_back">
           <div className="row">
             {button_status ? (
               <>
-                <div className="col s12 m12 l12 center">
-                  <font className="date_input_text">Credential Type</font>
-                </div>
-                <div className="col s6 m4 l4">
-                  <div
-                    className={`div_button center ${
-                      credential_type === "Enrollment"
-                        ? "div_button_active"
-                        : ""
-                    }`}
-                    onClick={() => set_credential_type("Enrollment")}
-                  >
-                    Enrollment
-                  </div>
-                </div>
-                <div className="col s6 m4 l4">
-                  <div
-                    className={`div_button center ${
-                      credential_type === "Assessment"
-                        ? "div_button_active"
-                        : ""
-                    }`}
-                    onClick={() => set_credential_type("Assessment")}
-                  >
-                    Assessment
-                  </div>
-                </div>
-                <div className="col s6 m4 l4">
-                  <div
-                    className={`div_button center ${
-                      credential_type === "Benifits" ? "div_button_active" : ""
-                    }`}
-                    onClick={() => set_credential_type("Benifits")}
-                  >
-                    Benifits
-                  </div>
-                </div>
-                <div className="col s12 m12 l12 center">
-                  <font className="date_input_text">Data Source</font>
-                </div>
-                <div className="col s6 m6 l6">
-                  <div
-                    className={`div_button center ${
-                      data_type === "CSV Data" ? "div_button_active" : ""
-                    }`}
-                    onClick={() => set_data_type("CSV Data")}
-                  >
-                    CSV Data
-                  </div>
-                </div>
-                <div className="col s6 m6 l6">
-                  <div
-                    className={`div_button center ${
-                      data_type === "Dummy Data" ? "div_button_active" : ""
-                    }`}
-                    onClick={() => set_data_type("Dummy Data")}
-                  >
-                    Mock Prerana Portal Data
-                  </div>
-                </div>
-                {data_type === "CSV Data" ? (
-                  <>
-                    <div className="col s12 m6 l6 center">
-                      <br />
-                      <a
-                        href={
+                <div className="row">
+                  <div className="col s12 m12 l6 center">
+                    <div className="col s12">
+                      <font className="date_input_text">
+                        Select Credential Type
+                      </font>
+                    </div>
+                    <div className="col s6 m4 l4">
+                      <div
+                        className={`div_button center ${
                           credential_type === "Enrollment"
-                            ? Enrollment
-                            : credential_type === "Assessment"
-                            ? Assessment
-                            : Benifits
-                        }
-                        download={true}
-                        className="download_text"
+                            ? "div_button_active"
+                            : ""
+                        }`}
+                        onClick={() => set_credential_type("Enrollment")}
                       >
-                        Download Sample {credential_type} CSV Data File
-                      </a>
+                        Enrollment
+                      </div>
+                    </div>
+                    <div className="col s6 m4 l4">
+                      <div
+                        className={`div_button center ${
+                          credential_type === "Assessment"
+                            ? "div_button_active"
+                            : ""
+                        }`}
+                        onClick={() => set_credential_type("Assessment")}
+                      >
+                        Assessment
+                      </div>
+                    </div>
+                    <div className="col s6 m4 l4">
+                      <div
+                        className={`div_button center ${
+                          credential_type === "Benifits"
+                            ? "div_button_active"
+                            : ""
+                        }`}
+                        onClick={() => set_credential_type("Benifits")}
+                      >
+                        Benefits
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col s12 m12 l6 center">
+                    <div className="col s12">
+                      <font className="date_input_text">
+                        Select Data source
+                      </font>
+                    </div>
+                    <div className="col s6 m6 l6">
+                      <div
+                        className={`div_button center ${
+                          data_type === "CSV Data" ? "div_button_active" : ""
+                        }`}
+                        onClick={() => set_data_type("CSV Data")}
+                      >
+                        CSV File
+                      </div>
+                    </div>
+                    <div className="col s6 m6 l6">
+                      <div
+                        className={`div_button center ${
+                          data_type === "Dummy Data" ? "div_button_active" : ""
+                        }`}
+                        onClick={() => set_data_type("Dummy Data")}
+                      >
+                        Mock Prerana Portal Data
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col s12 m12 l12 center">
+                    <hr className="hr_line" />
+                  </div>
+                </div>
+                <div className="row">
+                  {data_type === "CSV Data" ? (
+                    <>
+                      <div className="col s12 m6 l6 center">
+                        <font className="download_text">
+                          Prepare your data based on the downloaded template and
+                          upload it for issuing credentials :
+                        </font>
+                        <br />
+                        <a
+                          href={
+                            credential_type === "Enrollment"
+                              ? Enrollment
+                              : credential_type === "Assessment"
+                              ? Assessment
+                              : Benifits
+                          }
+                          download={true}
+                          className="download_text_link"
+                        >
+                          Download Sample{" "}
+                          {credential_type === "Benifits"
+                            ? "Benefits"
+                            : credential_type}{" "}
+                          CSV Data File
+                        </a>
+                      </div>
+                      <div className="col s12 m6 l6 center">
+                        <font
+                          onClick={() =>
+                            document.getElementById("csvFileInput").click()
+                          }
+                          className="file_choose"
+                        >
+                          Choose File
+                        </font>
+                        <input
+                          type={"file"}
+                          id={"csvFileInput"}
+                          accept={".csv"}
+                          onChange={handleOnChange}
+                          className="hide"
+                        />
+                        <br />
+                        <br />
+                        <font className="download_text">
+                          <u>
+                            <b>
+                              {document.getElementById("csvFileInput")
+                                ? document
+                                    .getElementById("csvFileInput")
+                                    ?.files?.item(0)
+                                  ? " " +
+                                    document
+                                      .getElementById("csvFileInput")
+                                      .files.item(0).name
+                                  : ""
+                                : ""}
+                            </b>
+                          </u>
+                        </font>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                <div className="row">
+                  <div className="row">
+                    <div className="col s12 m6 l6 center">
+                      <font className="date_input_text">
+                        Enter Issuance Date
+                      </font>
+                      <br />
+                      <DatePicker
+                        selected={issuanceDate}
+                        onChange={(date) => set_issuanceDate(date)}
+                        className="date_input"
+                        dateFormat="dd-MMM-yyyy"
+                      />
                     </div>
                     <div className="col s12 m6 l6 center">
+                      <font className="date_input_text">
+                        Enter Expiration Date
+                      </font>
+                      <br />
+                      <DatePicker
+                        selected={expirationDate}
+                        onChange={(date) => set_expirationDate(date)}
+                        className="date_input"
+                        dateFormat="dd-MMM-yyyy"
+                      />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col s12 m6 l6 center">
+                      <font className="date_input_text">Issuer</font>
                       <br />
                       <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
+                        type="text"
+                        value={issuer}
+                        className="date_input_pass"
+                        readOnly={true}
                       />
-                      <br />
-                      <br />
                     </div>
-                    {/*<div className="col s12 m12 l12 center">
-                      <table className="custom_table">
-                        <thead>
-                          <tr key={"header"}>
-                            {headerKeys.map((key) => (
-                              <th>{key}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {array.map((item) => (
-                            <tr key={item.id}>
-                              {Object.values(item).map((val) => (
-                                <td>{val}</td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    {credential_type === "Enrollment" ? (
+                      <>
+                        <div className="col s12 m6 l6 center">
+                          <font className="date_input_text">
+                            Nature of Association
+                          </font>
+                          <br />
+                          <input
+                            type="text"
+                            value={nature_associate}
+                            className="date_input_pass"
+                            readOnly={true}
+                          />
+                        </div>
+                        <div className="col s12 m6 l6 center">
+                          <font className="date_input_text">
+                            Association Title
+                          </font>
+                          <br />
+                          <input
+                            type="text"
+                            value={title_associate}
+                            className="date_input_pass"
+                            readOnly={true}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                    <div className="col s12 m6 l6 center">
+                      <font className="date_input_text">Enter Password</font>
                       <br />
-                    </div>*/}
-                  </>
-                ) : (
-                  <></>
-                )}
-                <div className="col s12 m4 l4 center">
-                  <font className="date_input_text">Issuance Date</font>
-                  <br />
-                  <DatePicker
-                    selected={issuanceDate}
-                    onChange={(date) => set_issuanceDate(date)}
-                    className="date_input"
-                    dateFormat="dd-MMM-yyyy"
-                  />
-                </div>
-                <div className="col s12 m4 l4 center">
-                  <font className="date_input_text">Expiration Date</font>
-                  <br />
-                  <DatePicker
-                    selected={expirationDate}
-                    onChange={(date) => set_expirationDate(date)}
-                    className="date_input"
-                    dateFormat="dd-MMM-yyyy"
-                  />
-                </div>
-                <div className="col s12 m4 l4 center">
-                  <font className="date_input_text">Password</font>
-                  <br />
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => set_password(e.target.value)}
-                    className="date_input_pass"
-                  />
-                </div>
-                <div className="col s12 m12 l12 center">
-                  <br />
-                  <button
-                    className="issue_but"
-                    onClick={() => get_mock_data()}
-                    enabled={button_status}
-                  >
-                    Issue {credential_type}
-                  </button>
-                </div>
-                <div className="col s12 m12 l12 center">
-                  <font className="date_input_text">OR</font>
-                  <button
-                    className="delete_but"
-                    onClick={() => get_mock_data_delete()}
-                    enabled={button_status}
-                  >
-                    Delete All Credentials
-                  </button>
+                      <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => set_password(e.target.value)}
+                        className="date_input_pass"
+                      />
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col s12 m3 l4 center"></div>
+                    <div className="col s12 m6 l4 center">
+                      <button
+                        className="issue_but"
+                        onClick={() => get_mock_data()}
+                        enabled={button_status}
+                      >
+                        Issue{" "}
+                        {credential_type === "Benifits"
+                          ? "Benefits"
+                          : credential_type}
+                      </button>
+                      <font className="date_input_text">OR</font>
+                      <button
+                        className="delete_but"
+                        onClick={() => get_mock_data_delete()}
+                        enabled={button_status}
+                      >
+                        Delete All Credentials
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (
@@ -528,6 +632,7 @@ function App() {
             )}
           </div>
         </div>
+        <br />
         <div className="row">
           <div className="col s12 m12 l12 status_div">
             <center>
@@ -539,7 +644,12 @@ function App() {
               {response_data.length != 0 ? (
                 <>
                   <br />
-                  <font className="table_header">{credential_type} Data</font>
+                  <font className="table_header">
+                    {credential_type === "Benifits"
+                      ? "Benefits"
+                      : credential_type}{" "}
+                    Data
+                  </font>
                   <br />
                   <table className="custom_table">
                     <tr>
