@@ -1,11 +1,25 @@
 body {
-  /*background-image: url("../src/images/pana.png") !important;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: 100% 100%;*/
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+body {
+  /*background-image: url("../src/assets/images/pana.png") !important;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;*/
 }
 .div_back {
-  background-image: url("../src/images/pana.png") !important;
+  background-image: url("../images/pana.png") !important;
 }
 .logo_home {
   width: 350px;
@@ -127,10 +141,27 @@ td {
   border-radius: 17px;
   border: 5px solid #050c44;
   padding: 10px;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 .hr_line {
   border: 1px solid #ddd !important;
 }
 .container {
   overflow: hidden;
+}
+.page_title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.back_arrow {
+  cursor: pointer;
+  font-size: 40px;
+  margin-top: 10px;
+}
+.back_arrow_div {
+  margin-top: -80px !important;
+}
+.sample_template {
+  background-color: #fff;
 }
