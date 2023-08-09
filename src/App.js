@@ -8,9 +8,12 @@ import BulkIssuance from "./views/BulkIssuance/BulkIssuance";
 import SchemaCreate from "./views/SchemaCreate/SchemaCreate";
 import SchemaList from "./views/SchemaList/SchemaList";
 import SchemaDetail from "./views/SchemaDetail/SchemaDetail";
+import CredIssue from "./views/CredIssue/CredIssue";
 import SchemaTempCreate from "./views/SchemaTempCreate/SchemaTempCreate";
 import SchemaTempList from "./views/SchemaTempList/SchemaTempList";
 import SchemaTemp from "./views/SchemaTemp/SchemaTemp";
+import SchemaTempView from "./views/SchemaTempView/SchemaTempView";
+
 
 function App() {
   return (
@@ -28,6 +31,7 @@ function App() {
           path={"/bulk-issuance/schema/:schema_id"}
           element={<SchemaDetail />}
         />
+        <Route path={"/bulk-issuance/schema/:schema_id/issue"} element={<CredIssue />} />
         <Route
           path={"/bulk-issuance/schema/:schema_id/template/create"}
           element={<SchemaTempCreate />}
@@ -39,6 +43,10 @@ function App() {
         <Route
           path={"/bulk-issuance/schema/:schema_id/template/:schema_temp_id"}
           element={<SchemaTemp />}
+        />
+        <Route
+          path={"/bulk-issuance/schema/:schema_id/template/:schema_temp_id/view"}
+          element={<SchemaTempView />}
         />
       </Routes>
       <br />

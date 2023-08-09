@@ -102,10 +102,16 @@ function SchemaDetail() {
               <div className="col s12 center">
                 <font className="page_title">{schemaDetail?.name}</font>
                 <hr />
-                <br />
               </div>
               {button_status ? (
                 <>
+                  <div className="col s12">
+                    <Link to={"/bulk-issuance/schema/" + schema_id + "/issue"}>
+                      <div className={`div_button center div_button_active`}>
+                        Issue {schemaDetail?.name}
+                      </div>
+                    </Link>
+                  </div>
                   <table className="custom_table">
                     <tr>
                       <th>Required Fields</th>

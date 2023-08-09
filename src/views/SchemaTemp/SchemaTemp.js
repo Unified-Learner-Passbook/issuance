@@ -7,7 +7,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 //components
 import Header from "../../components/Header/Header";
 
-function SchemaDetail() {
+function SchemaTemp() {
   const { schema_id } = useParams();
   const { schema_temp_id } = useParams();
   const [bi_url, set_bi_url] = useState(process.env.REACT_APP_BULK_ISSUANCE);
@@ -106,7 +106,7 @@ function SchemaDetail() {
       //load schema template
     }
   };
-  function showSchemaDetail() {
+  function showSchemaTemp() {
     return (
       <>
         <div className="container_remove">
@@ -127,14 +127,35 @@ function SchemaDetail() {
                       <th>Id</th>
                     </tr>
                     <tr>
-                      <td>{JSON.stringify(schemaTempDetail[0]?.id)}</td>
+                      <td>{schemaTempDetail[0]?.id}</td>
                     </tr>
                     <tr>
                       <th>Type</th>
                     </tr>
                     <tr>
-                      <td>{JSON.stringify(schemaTempDetail[0]?.type)}</td>
+                      <td>{schemaTempDetail[0]?.type}</td>
                     </tr>
+                    <tr>
+                      <th>
+                        Template
+                        <Link
+                          to={
+                            "/bulk-issuance/schema/" +
+                            schema_id +
+                            "/template/" +
+                            schema_temp_id +
+                            "/view"
+                          }
+                        >
+                          <font class="material-icons search_arrow">
+                            search
+                          </font>
+                        </Link>
+                      </th>
+                    </tr>
+                    {/*<tr>
+                      <td>{JSON.stringify(schemaTempDetail[0]?.template)}</td>
+                    </tr>*/}
                   </table>
                 </>
               ) : (
@@ -160,17 +181,11 @@ function SchemaDetail() {
               )}
             </div>
           </div>
-          <div
-            className="sample_template"
-            dangerouslySetInnerHTML={{
-              __html: schemaTempDetail[0]?.template,
-            }}
-          ></div>
         </div>
       </>
     );
   }
-  return <React.Fragment>{showSchemaDetail()}</React.Fragment>;
+  return <React.Fragment>{showSchemaTemp()}</React.Fragment>;
 }
 
-export default SchemaDetail;
+export default SchemaTemp;

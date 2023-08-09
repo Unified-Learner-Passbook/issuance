@@ -13,7 +13,13 @@ function SchemaList() {
   const [process_status, set_process_status] = useState("Not Yet Started");
   //schema List states
   const [schemaList, setSchemaList] = useState([]);
-  const [tagList, setTagList] = useState("issuer");
+  const [tagList, setTagList] = useState(
+    localStorage.getItem("tagList") ? localStorage.getItem("tagList") : "issuer"
+  );
+
+  useEffect(() => {
+    localStorage.setItem("tagList", tagList);
+  }, [tagList]);
 
   const [temp_val] = useState([]);
   useEffect(() => {
@@ -21,6 +27,7 @@ function SchemaList() {
   }, [temp_val]);
 
   const load_schema_list = async () => {
+    setSchemaList([]);
     set_button_status(false);
     set_process_status("Loading Schema List");
 
@@ -69,7 +76,25 @@ function SchemaList() {
               <div className="col s12 center">
                 <font className="page_title">Credentials Schema List</font>
                 <hr />
+              </div>
+              <div className="col s12 center">
+                <font className="date_input_text">
+                  TagList (multiple values enter using comma)
+                </font>
                 <br />
+                <input
+                  type="text"
+                  value={tagList}
+                  className="date_input_pass"
+                  onChange={(e) => setTagList(e.target.value)}
+                />
+                <br />
+                <font
+                  class="material-icons search_arrow"
+                  onClick={() => load_schema_list()}
+                >
+                  search
+                </font>
               </div>
               {button_status ? (
                 <>

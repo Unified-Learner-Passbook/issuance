@@ -5,18 +5,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /*background-image: url("../src/assets/images/pana.png") !important;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;*/
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-}
-
-body {
-  /*background-image: url("../src/assets/images/pana.png") !important;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100% 100%;*/
 }
 .div_back {
   background-image: url("../images/pana.png") !important;
@@ -142,7 +139,6 @@ td {
   border: 5px solid #050c44;
   padding: 10px;
   word-wrap: break-word;
-  word-break: break-all;
 }
 .hr_line {
   border: 1px solid #ddd !important;
@@ -161,6 +157,15 @@ td {
 }
 .back_arrow_div {
   margin-top: -80px !important;
+}
+.search_arrow {
+  cursor: pointer;
+  font-size: 30px;
+  margin-top: 10px;
+  background-color: #050c44;
+  color: #fff;
+  border-radius: 50%;
+  padding: 5px;
 }
 .sample_template {
   background-color: #fff;
