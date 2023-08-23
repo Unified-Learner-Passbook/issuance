@@ -21,14 +21,21 @@ function BulkIssuance() {
               <div className="col s12 m6 l6">
                 <Link to={"/bulk-issuance/schema/create"}>
                   <div className={`div_button center div_button_active`}>
-                    Create Credentials Schema
+                    Create New Credentials Schema
                   </div>
                 </Link>
               </div>
               <div className="col s12 m6 l6">
                 <Link to={"/bulk-issuance/schema/list"}>
                   <div className={`div_button center div_button_active`}>
-                    Credentials Schema List
+                    Select From Existing Credentials Schema
+                  </div>
+                </Link>
+              </div>
+              <div className="col s12 m6 l6">
+                <Link to={"/bulk-issuance/issuer/create"}>
+                  <div className={`div_button center div_button_active`}>
+                    Create New Issuer
                   </div>
                 </Link>
               </div>

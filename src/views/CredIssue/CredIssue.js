@@ -5,6 +5,7 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import ClipLoader from "react-spinners/ClipLoader";
+import Select from "react-select";
 
 //components
 import Header from "../../components/Header/Header";
@@ -26,9 +27,17 @@ function CredIssue() {
   const [expirationDate_txt, set_expirationDate_txt] = useState(null);
   const [password, set_password] = useState("");
 
-  const [issuer_did, set_issuer_did] = useState(
-    process.env.REACT_APP_ISSUER_DID
-  );
+  //issuer details
+  const [issuer_did, set_issuer_did] = useState("");
+  const [issuer_list, setissuer_list] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  useEffect(() => {
+    if (selectedOption) {
+      set_issuer_did(selectedOption.value);
+    }
+  }, [selectedOption]);
+
   const [data_type, set_data_type] = useState("CSV Data");
 
   //csv file states
@@ -89,7 +98,9 @@ function CredIssue() {
   const get_mock_data = async () => {
     if (password === "ULP@2023") {
       //alert(file);
-      if (data_type === "CSV Data" && !file) {
+      if (issuer_did === "") {
+        alert("Select Issuer from List");
+      } else if (data_type === "CSV Data" && !file) {
         alert("Select " + schemaDetail?.name + " CSV Data file");
       } else {
         set_response_data([]);
@@ -97,9 +108,20 @@ function CredIssue() {
         set_process_status(`Getting ${schemaDetail?.name} Data...`);
         if (data_type === "CSV Data") {
           //alert(JSON.stringify(array));
-          set_response_data(array);
-          if (array.length != 0) {
-            issueCred(array);
+          //alert(array.length);
+          if (array.length > 0) {
+            if (array[0].dob && array[0].dob === "dob") {
+              alert("You selected csv contain invalid data");
+              set_button_status(true);
+              set_process_status(`Not Yet Started`);
+            } else {
+              set_response_data(array);
+              issueCred(array);
+            }
+          } else {
+            alert("You selected csv contain no data");
+            set_button_status(true);
+            set_process_status(`Not Yet Started`);
           }
         } else {
           //other than csv file data source
@@ -174,10 +196,12 @@ function CredIssue() {
 
   //schema List states
   const [schemaDetail, setSchemaDetail] = useState(null);
+  const [schemaField, setSchemaField] = useState([[]]);
 
   const [temp_val] = useState([]);
   useEffect(() => {
     load_schema_detail();
+    load_issuer_list();
   }, [temp_val]);
 
   const load_schema_detail = async () => {
@@ -212,8 +236,76 @@ function CredIssue() {
       set_process_status("Not Yet Started");
     } else {
       set_button_status(true);
+      set_process_status("Not Yet Started");
       setSchemaDetail(response_result.data.result);
+      let fieldarray = response_result.data.result.required.concat(
+        response_result.data.result.optional
+      );
+      setSchemaField(fieldarray);
     }
+  };
+
+  const load_issuer_list = async () => {
+    setissuer_list([]);
+    set_button_status(false);
+    set_process_status("Loading Issuer List");
+
+    var config = {
+      method: "get",
+      url: bi_url + "bulk/v1/issuerlist",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let response_result = null;
+    await axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        response_result = { data: response.data };
+      })
+      .catch(function (error) {
+        console.log(error);
+        response_result = { error: error };
+      });
+    if (response_result?.error) {
+      set_button_status(true);
+      set_process_status("Not Yet Started");
+    } else {
+      set_button_status(true);
+      set_process_status("Not Yet Started");
+      if (
+        response_result.data.result &&
+        response_result.data.result.length > 0
+      ) {
+        let options = [];
+        for (let i = 0; i < response_result.data.result.length; i++) {
+          options.push({
+            value: response_result.data.result[i].did,
+            label: response_result.data.result[i].name,
+          });
+        }
+        setissuer_list(options);
+      }
+    }
+  };
+  const download_csv_file = () => {
+    //define the heading for each row of the data
+    let csv = "";
+    for (let i = 0; i < schemaField.length; i++) {
+      if (i === 0) {
+        csv = csv + schemaField[i];
+      } else {
+        csv = csv + "," + schemaField[i];
+      }
+    }
+    var hiddenElement = document.createElement("a");
+    hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+    hiddenElement.target = "_blank";
+
+    //provide the name for the CSV file to be downloaded
+    hiddenElement.download = schemaDetail?.name + ".csv";
+    hiddenElement.click();
   };
 
   function showCredIssue() {
@@ -233,6 +325,16 @@ function CredIssue() {
                   {schemaDetail?.name ? (
                     <>
                       <div className="row">
+                        <div className="col s12 m12 l12 center">
+                          <font className="date_input_text">Select Issuer</font>
+                          <Select
+                            defaultValue={issuer_did}
+                            onChange={setSelectedOption}
+                            options={issuer_list}
+                          />
+                        </div>
+                      </div>
+                      <div className="row">
                         {data_type === "CSV Data" ? (
                           <>
                             <div className="col s12 m6 l6 center">
@@ -241,14 +343,14 @@ function CredIssue() {
                                 template and upload it for issuing credentials :
                               </font>
                               <br />
-                              <a
-                                href="#"
-                                download={true}
+                              <font
+                                onClick={() => download_csv_file()}
                                 className="download_text_link"
+                                style={{ cursor: "pointer" }}
                               >
                                 Download Sample {schemaDetail?.name} CSV Data
-                                File
-                              </a>
+                                File{" "}
+                              </font>
                             </div>
                             <div className="col s12 m6 l6 center">
                               <font

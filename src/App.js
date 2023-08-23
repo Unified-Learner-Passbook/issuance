@@ -5,6 +5,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Home from "./views/Home/Home";
 import ULPBFF from "./views/ULPBFF/ULPBFF";
 import BulkIssuance from "./views/BulkIssuance/BulkIssuance";
+import IssuerCreate from "./views/IssuerCreate/IssuerCreate";
 import SchemaCreate from "./views/SchemaCreate/SchemaCreate";
 import SchemaList from "./views/SchemaList/SchemaList";
 import SchemaDetail from "./views/SchemaDetail/SchemaDetail";
@@ -14,14 +15,17 @@ import SchemaTempList from "./views/SchemaTempList/SchemaTempList";
 import SchemaTemp from "./views/SchemaTemp/SchemaTemp";
 import SchemaTempView from "./views/SchemaTempView/SchemaTempView";
 
-
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path={"/*"} element={<Home />} />
+        <Route path={"/*"} element={<BulkIssuance />} />
         <Route path={"/ulp-bff"} element={<ULPBFF />} />
         <Route path={"/bulk-issuance"} element={<BulkIssuance />} />
+        <Route
+          path={"/bulk-issuance/issuer/create"}
+          element={<IssuerCreate />}
+        />
         <Route
           path={"/bulk-issuance/schema/create"}
           element={<SchemaCreate />}
@@ -31,7 +35,10 @@ function App() {
           path={"/bulk-issuance/schema/:schema_id"}
           element={<SchemaDetail />}
         />
-        <Route path={"/bulk-issuance/schema/:schema_id/issue"} element={<CredIssue />} />
+        <Route
+          path={"/bulk-issuance/schema/:schema_id/issue"}
+          element={<CredIssue />}
+        />
         <Route
           path={"/bulk-issuance/schema/:schema_id/template/create"}
           element={<SchemaTempCreate />}
@@ -45,7 +52,9 @@ function App() {
           element={<SchemaTemp />}
         />
         <Route
-          path={"/bulk-issuance/schema/:schema_id/template/:schema_temp_id/view"}
+          path={
+            "/bulk-issuance/schema/:schema_id/template/:schema_temp_id/view"
+          }
           element={<SchemaTempView />}
         />
       </Routes>
