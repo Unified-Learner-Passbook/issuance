@@ -9,7 +9,7 @@ function BulkIssuance() {
     return (
       <>
         <div className="container_remove">
-          <Header isback={true} />
+          <Header isback={false} />
           <div className="container div_cred_type div_back">
             <div className="row">
               <div className="col s12 center">
