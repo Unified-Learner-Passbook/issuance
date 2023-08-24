@@ -21,7 +21,7 @@ node() {
         '''
         if (env.BRANCH_NAME == 'dev-q1') {
             sh '''
-            docker build -t $docker_server/$docker_repo:dev .
+            docker build -t $docker_server/$docker_repo:dev-q1 .
             '''
         }
     }
@@ -32,7 +32,7 @@ node() {
         '''
         if (env.BRANCH_NAME == 'dev-q1') {
             sh '''
-            docker push $docker_server/$docker_repo:dev
+            docker push $docker_server/$docker_repo:dev-q1
                         '''
         }
     }
