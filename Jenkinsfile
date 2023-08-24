@@ -19,7 +19,7 @@ node() {
         sh '''
         docker build -t $docker_server/$docker_repo:$commit_id .
         '''
-        if (env.BRANCH_NAME == 'dev') {
+        if (env.BRANCH_NAME == 'dev-q1') {
             sh '''
             docker build -t $docker_server/$docker_repo:dev .
             '''
@@ -30,7 +30,7 @@ node() {
         sh '''
         docker push $docker_server/$docker_repo:$commit_id
         '''
-        if (env.BRANCH_NAME == 'dev') {
+        if (env.BRANCH_NAME == 'dev-q1') {
             sh '''
             docker push $docker_server/$docker_repo:dev
                         '''
@@ -38,8 +38,8 @@ node() {
     }
     
     stage('Start deploy job with latest tag') {
-         if (env.BRANCH_NAME == 'dev') { 
-                build job: 'SBRC-deploy/deploy-services/deploy-staging/deploy-issuer', parameters: [string(name: 'tag', value: 'dev')]
+         if (env.BRANCH_NAME == 'dev-q1') { 
+                 build job: 'UAT/deploy-uat/deploy-issuer', parameters: [string(name: 'tag', value: 'dev-q1')]
          }
 }
 
