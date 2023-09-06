@@ -7890,6 +7890,11 @@
   "resolved" "https://registry.npmjs.org/react-csv/-/react-csv-2.2.2.tgz"
   "version" "2.2.2"
 
+"react-custom-checkbox@^3.1.5":
+  "integrity" "sha512-MTGyAkebTsMjDnsJ/HpkRT49yy4ODhmy/CUAFlCnsejQAjyn6Lgmg2ihB0CNf+R1cu5ytJ/ORdovFlB88madaQ=="
+  "resolved" "https://registry.npmjs.org/react-custom-checkbox/-/react-custom-checkbox-3.1.5.tgz"
+  "version" "3.1.5"
+
 "react-datepicker@^4.14.1":
   "integrity" "sha512-uiPfjD+25KI5WOfCAXlzQgSLyksTagk3wwKn1KGBdF19YtybFDregRmcoNNGveQHAbT10SJZdCvk/8pbc7zxJg=="
   "resolved" "https://registry.npmjs.org/react-datepicker/-/react-datepicker-4.14.1.tgz"
