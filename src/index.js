@@ -4,8 +4,6 @@ import "./assets/css/AppDesign.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
-//css
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
