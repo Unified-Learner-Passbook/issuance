@@ -147,7 +147,7 @@ function SchemaTemp() {
                             "/view"
                           }
                         >
-                          <font class="material-icons search_arrow">
+                          <font className="material-icons search_arrow">
                             search
                           </font>
                         </Link>
