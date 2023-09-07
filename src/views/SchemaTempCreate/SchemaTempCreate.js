@@ -4,6 +4,12 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 
+//html editor
+import Editor from "react-simple-wysiwyg";
+
+//json file
+import { schemaTmpObj } from "../../utils/const/schemaTmpObj";
+
 //components
 import Header from "../../components/Header/Header";
 
@@ -108,8 +114,50 @@ function SchemaTempCreate() {
       set_button_status(true);
       setFile(null);
       setJSON(null);
+      //reset all values
+      set_sch_tmp_type("");
+      set_sch_tmp_template("");
+      set_editorState("");
     }
   };
+
+  //scheama create form objects
+  const [sch_tmp_id, set_sch_tmp_id] = useState(schema_id);
+  const [sch_tmp_template, set_sch_tmp_template] = useState("");
+  const [sch_tmp_type, set_sch_tmp_type] = useState("");
+  const [sch_schema_template, set_sch_schema_template] = useState(schemaTmpObj);
+
+  //html editor
+  const [editorState, set_editorState] = useState("");
+  //set set_sch_tmp_template
+  useEffect(() => {
+    //set set_sch_tmp_template
+    set_sch_tmp_template(editorState);
+  }, [editorState]);
+
+  //extra variable forms required
+  const [tmp_cnt, set_tmp_cnt] = useState(0);
+
+  //create sch_schema_template object
+  useEffect(() => {
+    //create schema object
+    let tmp_sch_schema_template = sch_schema_template;
+    //add sch_tmp_id
+    tmp_sch_schema_template.schema = sch_tmp_id;
+    //add sch_tmp_template
+    tmp_sch_schema_template.template = sch_tmp_template;
+    //add sch_tmp_type
+    tmp_sch_schema_template.type = sch_tmp_type;
+    //set schema object
+    set_sch_schema_template(tmp_sch_schema_template);
+    set_tmp_cnt((tmp_cnt) => tmp_cnt + 1);
+  }, [sch_tmp_id, sch_tmp_type, sch_tmp_template]);
+  //set JSON
+  useEffect(() => {
+    //set set_JSON
+    setJSON(sch_schema_template);
+  }, [sch_schema_template]);
+
   function showSchemaTempCreate() {
     return (
       <>
@@ -122,9 +170,98 @@ function SchemaTempCreate() {
                   {schemaDetail?.name} Schema Template Create
                 </font>
                 <hr />
-                <br />
               </div>
               {button_status ? (
+                <>
+                  <div className="col s12">
+                    <div className="row">
+                      <div className="col s12 m4 l4 center"></div>
+                      <div className="col s12 m4 l4 center">
+                        <font className="date_input_text">Type</font>
+                        <br />
+                        <input
+                          type="text"
+                          value={sch_tmp_type}
+                          className="date_input_pass"
+                          onChange={(e) => set_sch_tmp_type(e.target.value)}
+                        />
+                      </div>
+                      <div className="col s12 m12 l12">
+                        <font className="date_input_text">Template</font>
+                        <Editor
+                          value={editorState}
+                          onChange={(e) => {
+                            set_editorState(e.target.value);
+                          }}
+                        />
+                      </div>
+                      <div className="col s12">
+                        {sch_schema_template?.schema &&
+                        sch_schema_template?.template &&
+                        sch_schema_template?.type ? (
+                          <>
+                            {/*<hr />
+                            <div
+                              className="sample_template"
+                              dangerouslySetInnerHTML={{
+                                __html: sch_schema_template?.template,
+                              }}
+                            ></div>*/}
+                            {/*<center>
+                              <b>{JSON.stringify(schemaDetail?.name)}</b>{" "}
+                              Template JSON
+                            </center>
+                            <pre style={{ textAlign: "left" }}>
+                              {JSON.stringify(
+                                sch_schema_template,
+                                undefined,
+                                2
+                              )}
+                            </pre>*/}
+                            <br />
+                            <button
+                              className="issue_but"
+                              onClick={() => create_schema_temp()}
+                            >
+                              Create {schemaDetail?.name} Schema Template
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <hr />
+                            <center>
+                              <b>
+                                Invalid Credentials Schema Template JSON Object.
+                              </b>
+                            </center>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="col s12 m12 l12 center">
+                    <br />
+                    <ClipLoader
+                      color="#ff0000"
+                      loading={true}
+                      size={70}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                    <br />
+                    <br />
+                    <div className="status_div">
+                      <center>
+                        <font className="status_text">{process_status}</font>
+                      </center>
+                    </div>
+                  </div>
+                </>
+              )}
+              {/*button_status ? (
                 <>
                   <div className="col s12 center">
                     <br />
@@ -205,7 +342,7 @@ function SchemaTempCreate() {
                     </div>
                   </div>
                 </>
-              )}
+              )*/}
             </div>
           </div>
         </div>

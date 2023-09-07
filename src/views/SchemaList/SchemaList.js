@@ -90,7 +90,7 @@ function SchemaList() {
                 />
                 <br />
                 <font
-                  class="material-icons search_arrow"
+                  className="material-icons search_arrow"
                   onClick={() => load_schema_list()}
                 >
                   search

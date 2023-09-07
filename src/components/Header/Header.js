@@ -25,7 +25,7 @@ function Header(props) {
             <>
               <div className="col s2 back_arrow_div">
                 <font
-                  class="material-icons back_arrow"
+                  className="material-icons back_arrow"
                   onClick={() => navigate(-1)}
                 >
                   arrow_back
