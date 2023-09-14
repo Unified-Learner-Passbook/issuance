@@ -200,7 +200,8 @@ function SchemaTempCreate() {
                         />
                       </div>
                       <div className="col s12">
-                        {sch_schema_template?.schema &&
+                        {sch_schema_template?.schemaId &&
+                        sch_schema_template?.schemaVersion &&
                         sch_schema_template?.template &&
                         sch_schema_template?.type ? (
                           <>
