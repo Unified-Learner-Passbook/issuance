@@ -11,6 +11,7 @@ function SchemaTemp() {
   const { schema_id } = useParams();
   const { schema_temp_id } = useParams();
   const [bi_url, set_bi_url] = useState(process.env.REACT_APP_BULK_ISSUANCE);
+  const [ub_url, set_ub_url] = useState(process.env.REACT_APP_ULP_BFF);
   const [button_status, set_button_status] = useState(true);
   const [process_status, set_process_status] = useState("Not Yet Started");
   //schema List states
@@ -32,7 +33,7 @@ function SchemaTemp() {
 
     var config = {
       method: "post",
-      url: bi_url + "bulk/v1/credential/schema/fields",
+      url: ub_url + "v1/credential/schema/fields",
       headers: {
         "Content-Type": "application/json",
       },
@@ -68,7 +69,7 @@ function SchemaTemp() {
 
     var config = {
       method: "post",
-      url: bi_url + "bulk/v1/credential/schema/template/list",
+      url: ub_url + "v1/credential/schema/template/list",
       headers: {
         "Content-Type": "application/json",
       },

@@ -13,6 +13,7 @@ import Header from "../../components/Header/Header";
 function CredIssue() {
   const { schema_id } = useParams();
   const [bi_url, set_bi_url] = useState(process.env.REACT_APP_BULK_ISSUANCE);
+  const [ub_url, set_ub_url] = useState(process.env.REACT_APP_ULP_BFF);
   const [response, set_response] = useState([]);
   const [response_data, set_response_data] = useState([]);
   const [button_status, set_button_status] = useState(true);
@@ -214,7 +215,7 @@ function CredIssue() {
 
     var config = {
       method: "post",
-      url: bi_url + "bulk/v1/credential/schema/fields",
+      url: ub_url + "v1/credential/schema/fields",
       headers: {
         "Content-Type": "application/json",
       },
@@ -252,7 +253,7 @@ function CredIssue() {
 
     var config = {
       method: "get",
-      url: bi_url + "bulk/v1/issuerlist",
+      url: ub_url + "v1/issuerlist",
       headers: {
         "Content-Type": "application/json",
       },

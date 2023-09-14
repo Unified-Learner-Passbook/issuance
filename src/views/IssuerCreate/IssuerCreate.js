@@ -12,6 +12,7 @@ import Header from "../../components/Header/Header";
 
 function IssuerCreate() {
   const [bi_url, set_bi_url] = useState(process.env.REACT_APP_BULK_ISSUANCE);
+  const [ub_url, set_ub_url] = useState(process.env.REACT_APP_ULP_BFF);
   const [button_status, set_button_status] = useState(true);
   const [process_status, set_process_status] = useState("Not Yet Started");
   //issuer details
@@ -30,7 +31,7 @@ function IssuerCreate() {
 
     var config = {
       method: "get",
-      url: bi_url + "bulk/v1/issuerlist",
+      url: ub_url + "v1/issuerlist",
       headers: {
         "Content-Type": "application/json",
       },
@@ -70,7 +71,7 @@ function IssuerCreate() {
       });
       var config = {
         method: "post",
-        url: bi_url + "bulk/v1/clienttoken",
+        url: ub_url + "v1/clienttoken",
         headers: {
           "Content-Type": "application/json",
         },
@@ -97,7 +98,7 @@ function IssuerCreate() {
         });
         var config = {
           method: "post",
-          url: bi_url + "bulk/v1/getdid",
+          url: ub_url + "v1/getdid",
           headers: {
             "Content-Type": "application/json",
           },
@@ -129,7 +130,7 @@ function IssuerCreate() {
           var data = JSON.stringify(issuer_object);
           var config = {
             method: "post",
-            url: bi_url + "bulk/v1/issuerregister",
+            url: ub_url + "v1/issuerregister",
             headers: {
               "Content-Type": "application/json",
               Authorization: "Bearer " + token,

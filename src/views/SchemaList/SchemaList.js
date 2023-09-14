@@ -9,6 +9,7 @@ import Header from "../../components/Header/Header";
 
 function SchemaList() {
   const [bi_url, set_bi_url] = useState(process.env.REACT_APP_BULK_ISSUANCE);
+  const [ub_url, set_ub_url] = useState(process.env.REACT_APP_ULP_BFF);
   const [button_status, set_button_status] = useState(true);
   const [process_status, set_process_status] = useState("Not Yet Started");
   //schema List states
@@ -37,7 +38,7 @@ function SchemaList() {
 
     var config = {
       method: "post",
-      url: bi_url + "bulk/v1/credential/schema/list",
+      url: ub_url + "v1/credential/schema/list",
       headers: {
         "Content-Type": "application/json",
       },

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
 import Checkbox from "react-custom-checkbox";
+import Select from "react-select";
 
 //json file
 import SampleCredentialsSchema from "../../assets/json/SampleCredentialsSchema.json";
@@ -14,6 +15,7 @@ import Header from "../../components/Header/Header";
 
 function SchemaCreate() {
   const [bi_url, set_bi_url] = useState(process.env.REACT_APP_BULK_ISSUANCE);
+  const [ub_url, set_ub_url] = useState(process.env.REACT_APP_ULP_BFF);
   const [button_status, set_button_status] = useState(true);
   const [process_status, set_process_status] = useState("Not Yet Started");
   //json file states
@@ -36,7 +38,9 @@ function SchemaCreate() {
   }, [file]);
 
   const create_schema = async () => {
-    if (JSON.stringify(json?.schema?.schema?.properties) === "{}") {
+    if (issuer_did === "") {
+      alert("Select Issuer from List");
+    } else if (JSON.stringify(json?.schema?.schema?.properties) === "{}") {
       alert("Add Schema Subject name, description");
     } else if (json?.tags.length === 0) {
       alert("Add Schema tags");
@@ -50,7 +54,7 @@ function SchemaCreate() {
 
       var config = {
         method: "post",
-        url: bi_url + "bulk/v1/getdid",
+        url: ub_url + "v1/getdid",
         headers: {
           "Content-Type": "application/json",
         },
@@ -78,7 +82,7 @@ function SchemaCreate() {
         var data = JSON.stringify(schema_object);
         var config = {
           method: "post",
-          url: bi_url + "bulk/v1/credential/schema/create",
+          url: ub_url + "v1/credential/schema/create",
           headers: {
             "Content-Type": "application/json",
           },
@@ -140,10 +144,73 @@ function SchemaCreate() {
   const [sch_taglist_txt, set_sch_taglist_txt] = useState("");
   const [tmp_cnt, set_tmp_cnt] = useState(0);
 
+  //issuer details
+  const [issuer_did, set_issuer_did] = useState("");
+  const [issuer_list, setissuer_list] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  useEffect(() => {
+    if (selectedOption) {
+      set_issuer_did(selectedOption.value);
+    }
+  }, [selectedOption]);
+
+  const [temp_val] = useState([]);
+  useEffect(() => {
+    load_issuer_list();
+  }, [temp_val]);
+
+  const load_issuer_list = async () => {
+    setissuer_list([]);
+    set_button_status(false);
+    set_process_status("Loading Issuer List");
+
+    var config = {
+      method: "get",
+      url: ub_url + "v1/issuerlist",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    let response_result = null;
+    await axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        response_result = { data: response.data };
+      })
+      .catch(function (error) {
+        console.log(error);
+        response_result = { error: error };
+      });
+    if (response_result?.error) {
+      set_button_status(true);
+      set_process_status("Not Yet Started");
+    } else {
+      set_button_status(true);
+      set_process_status("Not Yet Started");
+      if (
+        response_result.data.result &&
+        response_result.data.result.length > 0
+      ) {
+        let options = [];
+        for (let i = 0; i < response_result.data.result.length; i++) {
+          options.push({
+            value: response_result.data.result[i].did,
+            label: response_result.data.result[i].name,
+          });
+        }
+        setissuer_list(options);
+      }
+    }
+  };
+
   //create sch_schema object
   useEffect(() => {
     //create schema object
     let tmp_sch_schema = sch_schema;
+    //issuer_did
+    tmp_sch_schema.schema.author = issuer_did;
     //add version
     tmp_sch_schema.schema.version = sch_version;
     //add name
@@ -169,6 +236,7 @@ function SchemaCreate() {
     set_sch_schema(tmp_sch_schema);
     set_tmp_cnt((tmp_cnt) => tmp_cnt + 1);
   }, [
+    issuer_did,
     sch_version,
     sch_name,
     sch_desc,
@@ -272,6 +340,18 @@ function SchemaCreate() {
                 <>
                   <div className="col s12 center">
                     <div className="row">
+                      <div className="row">
+                        <div className="col s12 m12 l12 center">
+                          <font className="date_input_text">
+                            Select Issuer as Author for Schema
+                          </font>
+                          <Select
+                            defaultValue={issuer_did}
+                            onChange={setSelectedOption}
+                            options={issuer_list}
+                          />
+                        </div>
+                      </div>
                       <div className="row">
                         <div className="col s12 m4 l4 center">
                           <font className="date_input_text">Name</font>

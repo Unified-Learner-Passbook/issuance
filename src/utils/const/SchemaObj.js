@@ -10,7 +10,7 @@ export const schemaObj = {
     version: "",
     id: "",
     name: "",
-    author: "did:example:c276e12ec21ebfeb1f712ebc6f1",
+    author: "",
     authored: "2022-12-19T09:22:23.064Z",
     schema: {
       $id: "",
