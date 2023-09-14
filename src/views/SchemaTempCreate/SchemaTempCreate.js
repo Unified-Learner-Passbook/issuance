@@ -124,6 +124,7 @@ function SchemaTempCreate() {
 
   //scheama create form objects
   const [sch_tmp_id, set_sch_tmp_id] = useState(schema_id);
+  const [sch_version_id, set_sch_version_id] = useState("1.0.0");
   const [sch_tmp_template, set_sch_tmp_template] = useState("");
   const [sch_tmp_type, set_sch_tmp_type] = useState("");
   const [sch_schema_template, set_sch_schema_template] = useState(schemaTmpObj);
@@ -144,7 +145,9 @@ function SchemaTempCreate() {
     //create schema object
     let tmp_sch_schema_template = sch_schema_template;
     //add sch_tmp_id
-    tmp_sch_schema_template.schema = sch_tmp_id;
+    tmp_sch_schema_template.schemaId = sch_tmp_id;
+    //add scehma version
+    tmp_sch_schema_template.schemaVersion = sch_version_id;
     //add sch_tmp_template
     tmp_sch_schema_template.template = sch_tmp_template;
     //add sch_tmp_type

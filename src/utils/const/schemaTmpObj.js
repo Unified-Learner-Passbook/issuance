@@ -1,5 +1,6 @@
 export const schemaTmpObj = {
-  schema: "",
+  schemaId: "",
+  schemaVersion: "1.0.0",
   template: "",
   type: "",
 };
