@@ -128,7 +128,7 @@ function SchemaCreate() {
   };
 
   //scheama create form objects
-  const [sch_version, set_sch_version] = useState("1.0");
+  const [sch_version, set_sch_version] = useState("1.0.0");
   const [sch_name, set_sch_name] = useState("");
   const [sch_desc, set_sch_desc] = useState("");
   const [sch_required, set_sch_required] = useState([]);
