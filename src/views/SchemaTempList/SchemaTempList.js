@@ -125,13 +125,13 @@ function SchemaTempList() {
                             "/bulk-issuance/schema/" +
                             schema_id +
                             "/template/" +
-                            item.id+"/view"
+                            item.templateId+"/view"
                           }
                         >
                           <div
                             className={`div_button center div_button_active`}
                           >
-                            {item.type} {item.id}
+                            {item.type} {item.templateId}
                           </div>
                         </Link>
                       </div>

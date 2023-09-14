@@ -96,7 +96,7 @@ function SchemaTempView() {
         response_result.data.result.length > 0
       ) {
         for (let i = 0; i < response_result.data.result.length; i++) {
-          if (response_result.data.result[i].id === schema_temp_id) {
+          if (response_result.data.result[i].templateId === schema_temp_id) {
             schema_temp_detail.push(response_result.data.result[i]);
             break;
           }
