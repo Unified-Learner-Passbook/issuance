@@ -19,7 +19,7 @@ export const schemaObj = {
       required: [],
       properties: {},
       description: "",
-      additionalProperties: false,
+      additionalProperties: true,
     },
     proof: {
       type: "object",
