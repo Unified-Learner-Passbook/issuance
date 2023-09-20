@@ -239,7 +239,8 @@ function CredIssue() {
       set_button_status(true);
       set_process_status("Not Yet Started");
       setSchemaDetail(response_result.data.result);
-      let fieldarray = response_result.data.result.required.concat(
+      let fieldarray = response_result.data.result.register_required.concat(
+        response_result.data.result.required,
         response_result.data.result.optional
       );
       setSchemaField(fieldarray);

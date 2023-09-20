@@ -127,6 +127,12 @@ function SchemaDetail() {
                       <td>{JSON.stringify(schemaDetail?.optional)}</td>
                     </tr>
                     <tr>
+                      <th>Account Register Required Fields</th>
+                    </tr>
+                    <tr>
+                      <td>{JSON.stringify(schemaDetail?.register_required)}</td>
+                    </tr>
+                    <tr>
                       <th>
                         Schema Template= <b>{schemaTempList.length} Created</b>
                       </th>
